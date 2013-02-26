@@ -14,34 +14,45 @@ Add a mapping
 
 ```
 curl -X PUT localhost:9200/articles
-curl -v http://localhost:9200/articles/article/_mapping -d '{ "article" : { "properties" : { "content" : { "type" : "opennlp" } } } }'
+curl -v http://localhost:9200/articles/article/_mapping -d '
+{ "article" : { "properties" : { "content" : { "type" : "opennlp" } } } }'
 ```
 
 Index a document
 
 ```
-curl -X PUT http://localhost:9200/articles/article/1 -d '{ "title" : "Some title" , "content" : "Kobe Bryant is one of the best basketball players of all times. Not even Michael Jordan has ever scored 81 points in one game." }'
+curl -X PUT http://localhost:9200/articles/article/1 -d '
+{ "title" : "Some title" ,
+"content" : "Kobe Bryant is one of the best basketball players of all times. Not even Michael Jordan has ever scored 81 points in one game." }'
 ```
 
 Query for a persons name
 
 ```
-curl -X POST http://localhost:9200/articles/article/_search -d '{ "query" : { "term" : { "content.name" : "kobe" } } }'
+curl -X POST http://localhost:9200/articles/article/_search -d '
+{ "query" : { "term" : { "content.name" : "kobe" } } }'
 ```
 
 Query for another part of the article and you will not find it
 
 ```
-curl -X POST http://localhost:9200/articles/article/_search -d '{ "query" : { "term" : { "content.name" : "basketball" } } }'
+curl -X POST http://localhost:9200/articles/article/_search -d '
+{ "query" : { "term" : { "content.name" : "basketball" } } }'
 ```
 
 Querying also works for locations or dates
 
 ```
 curl -X PUT http://localhost:9200/articles/article/2 -d '{ "content" : "My next travel destination is going to be in Amsterdam. I will be going to Schiphol Airport next Sunday." }'
-curl -X POST http://localhost:9200/articles/article/_search -d '{ "query" : { "text" : { "content.location" : "schiphol airport" } } }'
-curl -X POST http://localhost:9200/articles/article/_search -d '{ "query" : { "term" : { "content.location" : "amsterdam" } } }'
-curl -X POST http://localhost:9200/articles/article/_search -d '{ "query" : { "term" : { "content.date" : "sunday" } } }'
+
+curl -X POST http://localhost:9200/articles/article/_search -d '
+{ "query" : { "text" : { "content.location" : "schiphol airport" } } }'
+
+curl -X POST http://localhost:9200/articles/article/_search -d '
+{ "query" : { "term" : { "content.location" : "amsterdam" } } }'
+
+curl -X POST http://localhost:9200/articles/article/_search -d '
+{ "query" : { "term" : { "content.date" : "sunday" } } }'
 ```
 
 
