@@ -1,0 +1,8 @@
+{
+    someType:{
+        properties:{
+            "someField":{ "type" : "opennlp" },
+            "someFieldAnalyzed":{ "type" : "opennlp" }
+        }
+    }
+}

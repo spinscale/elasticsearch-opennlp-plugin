@@ -1,0 +1,11 @@
+.project
+.settings
+.classpath
+.gradle
+data
+build
+target
+*.swp
+*.iml
+.idea
+src/test/resources/models

@@ -1,0 +1,12 @@
+rootLogger: INFO, console
+
+logger:
+  service.opennlp: DEBUG
+  plugin.opennlp.OpenNlpPlugin: DEBUG
+
+appender:
+  console:
+    type: console
+    layout:
+      type: consolePattern
+      conversionPattern: "[%d{ISO8601}][%-5p][%-25c] %m%n"

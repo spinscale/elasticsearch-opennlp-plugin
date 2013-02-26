@@ -1,0 +1,8 @@
+{
+    someType:{
+        properties:{
+            "someFieldAnalyzed" :   {   "type": "opennlp", "person_analyzer" : "keyword"   },
+            "someField"         :   {   "type": "opennlp"   }
+        }
+    }
+}
