@@ -17,7 +17,7 @@
  */
 package org.elasticsearch.module.opennlp.test;
 
-import org.apache.lucene.analysis.KeywordAnalyzer;
+import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.document.Document;
 import org.elasticsearch.common.bytes.BytesReference;
 import org.elasticsearch.common.collect.Maps;
@@ -29,9 +29,11 @@ import org.elasticsearch.index.analysis.AnalysisService;
 import org.elasticsearch.index.analysis.AnalyzerProviderFactory;
 import org.elasticsearch.index.analysis.AnalyzerScope;
 import org.elasticsearch.index.analysis.PreBuiltAnalyzerProviderFactory;
+import org.elasticsearch.index.codec.postingsformat.PostingsFormatService;
 import org.elasticsearch.index.mapper.DocumentMapper;
 import org.elasticsearch.index.mapper.DocumentMapperParser;
 import org.elasticsearch.index.mapper.opennlp.OpenNlpMapper;
+import org.elasticsearch.index.similarity.SimilarityLookupService;
 import org.elasticsearch.service.opennlp.OpenNlpService;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,7 +60,8 @@ public class OpenNlpMappingTest {
         analyzerFactoryFactories.put("keyword", new PreBuiltAnalyzerProviderFactory("keyword", AnalyzerScope.INDEX, new KeywordAnalyzer()));
         AnalysisService analysisService = new AnalysisService(index, ImmutableSettings.Builder.EMPTY_SETTINGS, null, analyzerFactoryFactories, null, null, null);
 
-        mapperParser = new DocumentMapperParser(index, analysisService);
+        mapperParser = new DocumentMapperParser(index, analysisService, new PostingsFormatService(index),
+                new SimilarityLookupService(index, ImmutableSettings.Builder.EMPTY_SETTINGS));
         Settings settings = settingsBuilder()
                 .put("opennlp.models.name.file", "src/test/resources/models/en-ner-person.bin")
                 .put("opennlp.models.date.file", "src/test/resources/models/en-ner-date.bin")
@@ -82,9 +85,9 @@ public class OpenNlpMappingTest {
         Document doc = docMapper.parse(json).rootDoc();
 
         assertThat(doc.get(docMapper.mappers().smartName("someField").mapper().names().indexName()), is(sampleText));
-        assertThat(doc.getFieldables("someField.name").length, is(2));
-        assertThat(doc.getFieldables("someField.name")[0].stringValue(), is("Jack Nicholson"));
-        assertThat(doc.getFieldables("someField.name")[1].stringValue(), is("Kobe Bryant"));
+        assertThat(doc.getFields("someField.name").length, is(2));
+        assertThat(doc.getFields("someField.name")[0].stringValue(), is("Jack Nicholson"));
+        assertThat(doc.getFields("someField.name")[1].stringValue(), is("Kobe Bryant"));
         assertThat(doc.get(docMapper.mappers().smartName("someField.date").mapper().names().indexName()), is("tomorrow"));
         assertThat(doc.get(docMapper.mappers().smartName("someField.location").mapper().names().indexName()), is("Munich"));
 
@@ -96,9 +99,9 @@ public class OpenNlpMappingTest {
         doc = docMapper.parse(json).rootDoc();
 
         assertThat(doc.get(docMapper.mappers().smartName("someField").mapper().names().indexName()), is(sampleText));
-        assertThat(doc.getFieldables("someField.name").length, is(2));
-        assertThat(doc.getFieldables("someField.name")[0].stringValue(), is("Jack Nicholson"));
-        assertThat(doc.getFieldables("someField.name")[1].stringValue(), is("Kobe Bryant"));
+        assertThat(doc.getFields("someField.name").length, is(2));
+        assertThat(doc.getFields("someField.name")[0].stringValue(), is("Jack Nicholson"));
+        assertThat(doc.getFields("someField.name")[1].stringValue(), is("Kobe Bryant"));
         assertThat(doc.get(docMapper.mappers().smartName("someField.date").mapper().names().indexName()), is("tomorrow"));
         assertThat(doc.get(docMapper.mappers().smartName("someField.location").mapper().names().indexName()), is("Munich"));
     }

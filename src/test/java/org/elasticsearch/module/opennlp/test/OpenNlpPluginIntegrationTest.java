@@ -57,7 +57,7 @@ public class OpenNlpPluginIntegrationTest {
 
         CreateIndexResponse createIndexResponse = new CreateIndexRequestBuilder(node.client().admin().indices())
                 .setIndex(index).execute().actionGet();
-        assertThat(createIndexResponse.getAcknowledged(), is(true));
+        assertThat(createIndexResponse.isAcknowledged(), is(true));
     }
 
     @After
@@ -75,12 +75,12 @@ public class OpenNlpPluginIntegrationTest {
         IndexResponse indexResponse = indexElement(sampleText);
 
         SearchResponse searchResponse = query(QueryBuilders.termQuery("someField.name", "jack"));
-        assertThat(searchResponse.hits().totalHits(), is(1L));
-        assertThat(searchResponse.hits().getAt(0).id(), is(indexResponse.id()));
+        assertThat(searchResponse.getHits().totalHits(), is(1L));
+        assertThat(searchResponse.getHits().getAt(0).id(), is(indexResponse.getId()));
 
         searchResponse = query(QueryBuilders.termQuery("someFieldAnalyzed.name", "jack"));
-        assertThat(searchResponse.hits().totalHits(), is(1L));
-        assertThat(searchResponse.hits().getAt(0).id(), is(indexResponse.id()));
+        assertThat(searchResponse.getHits().totalHits(), is(1L));
+        assertThat(searchResponse.getHits().getAt(0).id(), is(indexResponse.getId()));
     }
 
     @Test
@@ -91,18 +91,18 @@ public class OpenNlpPluginIntegrationTest {
         IndexResponse indexResponse = indexElement(sampleText);
 
         SearchResponse nonAnalyzedFieldSearchResponse = query(QueryBuilders.termQuery("someField.name", "jack"));
-        assertThat(nonAnalyzedFieldSearchResponse.hits().totalHits(), is(1L));
+        assertThat(nonAnalyzedFieldSearchResponse.getHits().totalHits(), is(1L));
 
         // analyzed, therefore not resulting anything like the above query
         SearchResponse analyzedFieldSearchResponse = query(QueryBuilders.termQuery("someFieldAnalyzed.name", "jack"));
-        assertThat(analyzedFieldSearchResponse.hits().totalHits(), is(0L));
+        assertThat(analyzedFieldSearchResponse.getHits().totalHits(), is(0L));
 
         SearchResponse searchResponse = query(QueryBuilders.prefixQuery("someFieldAnalyzed.name", "Jack"));
-        assertThat(searchResponse.hits().totalHits(), is(1L));
+        assertThat(searchResponse.getHits().totalHits(), is(1L));
 
         searchResponse = query(QueryBuilders.matchQuery("someFieldAnalyzed.name", "Jack Nicholson"));
-        assertThat(searchResponse.hits().totalHits(), is(1L));
-        assertThat(searchResponse.hits().getAt(0).id(), is(indexResponse.id()));
+        assertThat(searchResponse.getHits().totalHits(), is(1L));
+        assertThat(searchResponse.getHits().getAt(0).id(), is(indexResponse.getId()));
     }
 
     @Test
@@ -116,12 +116,12 @@ public class OpenNlpPluginIntegrationTest {
                 .setQuery(QueryBuilders.matchAllQuery())
                 .addFacet(new TermsFacetBuilder("names").field("someFieldAnalyzed.name").order(TermsFacet.ComparatorType.TERM))
                 .execute().actionGet();
-        assertThat(searchResponse.hits().totalHits(), is(1L));
-        assertThat(searchResponse.hits().getAt(0).id(), is(indexResponse.id()));
-        TermsFacet termsFacet = searchResponse.facets().facet(TermsFacet.class, "names");
-        assertThat(termsFacet.totalCount(), is(2L));
-        assertThat(termsFacet.entries().get(0).term(), is("Jack Nicholson"));
-        assertThat(termsFacet.entries().get(1).term(), is("Kobe Bryant"));
+        assertThat(searchResponse.getHits().totalHits(), is(1L));
+        assertThat(searchResponse.getHits().getAt(0).id(), is(indexResponse.getId()));
+        TermsFacet termsFacet = searchResponse.getFacets().facet(TermsFacet.class, "names");
+        assertThat(termsFacet.getTotalCount(), is(2L));
+        assertThat(termsFacet.getEntries().get(0).getTerm().string(), is("Jack Nicholson"));
+        assertThat(termsFacet.getEntries().get(1).getTerm().string(), is("Kobe Bryant"));
     }
 
     private SearchResponse query(QueryBuilder queryBuilder) {
@@ -133,7 +133,7 @@ public class OpenNlpPluginIntegrationTest {
         PutMappingRequestBuilder putMappingRequestBuilder = new PutMappingRequestBuilder(node.client().admin().indices());
         PutMappingResponse putMappingResponse = putMappingRequestBuilder.setIndices(index).setType(type)
                 .setSource(mapping).execute().actionGet();
-        assertThat(putMappingResponse.getAcknowledged(), is(true));
+        assertThat(putMappingResponse.isAcknowledged(), is(true));
     }
 
     private IndexResponse indexElement(String value) {
@@ -141,7 +141,7 @@ public class OpenNlpPluginIntegrationTest {
                 .setSource("someFieldAnalyzed", value, "someField", value)
                 .setRefresh(true)
                 .execute().actionGet();
-        assertThat(indexResponse.id(), is(notNullValue()));
+        assertThat(indexResponse.getId(), is(notNullValue()));
         return indexResponse;
     }
 }
