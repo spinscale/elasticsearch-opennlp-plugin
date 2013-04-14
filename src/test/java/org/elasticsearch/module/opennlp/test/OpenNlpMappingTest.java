@@ -82,7 +82,9 @@ public class OpenNlpMappingTest {
         Document doc = docMapper.parse(json).rootDoc();
 
         assertThat(doc.get(docMapper.mappers().smartName("someField").mapper().names().indexName()), is(sampleText));
-        assertThat(doc.get(docMapper.mappers().smartName("someField.name").mapper().names().indexName()), is("Jack Nicholson Kobe Bryant"));
+        assertThat(doc.getFieldables("someField.name").length, is(2));
+        assertThat(doc.getFieldables("someField.name")[0].stringValue(), is("Jack Nicholson"));
+        assertThat(doc.getFieldables("someField.name")[1].stringValue(), is("Kobe Bryant"));
         assertThat(doc.get(docMapper.mappers().smartName("someField.date").mapper().names().indexName()), is("tomorrow"));
         assertThat(doc.get(docMapper.mappers().smartName("someField.location").mapper().names().indexName()), is("Munich"));
 
@@ -94,7 +96,9 @@ public class OpenNlpMappingTest {
         doc = docMapper.parse(json).rootDoc();
 
         assertThat(doc.get(docMapper.mappers().smartName("someField").mapper().names().indexName()), is(sampleText));
-        assertThat(doc.get(docMapper.mappers().smartName("someField.name").mapper().names().indexName()), is("Jack Nicholson Kobe Bryant"));
+        assertThat(doc.getFieldables("someField.name").length, is(2));
+        assertThat(doc.getFieldables("someField.name")[0].stringValue(), is("Jack Nicholson"));
+        assertThat(doc.getFieldables("someField.name")[1].stringValue(), is("Kobe Bryant"));
         assertThat(doc.get(docMapper.mappers().smartName("someField.date").mapper().names().indexName()), is("tomorrow"));
         assertThat(doc.get(docMapper.mappers().smartName("someField.location").mapper().names().indexName()), is("Munich"));
     }

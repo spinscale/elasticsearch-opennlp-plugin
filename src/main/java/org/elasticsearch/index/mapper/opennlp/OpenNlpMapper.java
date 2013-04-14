@@ -180,23 +180,26 @@ public class OpenNlpMapper implements Mapper {
 
         Set<String> names = namedEntities.get("name");
         if (names != null && names.size() > 0) {
-            String nameString = Joiner.on(" ").join(names);
-            context.externalValue(nameString);
-            nameMapper.parse(context);
+            for (String name : names) {
+                context.externalValue(name);
+                nameMapper.parse(context);
+            }
         }
 
         Set<String> dates = namedEntities.get("date");
         if (dates != null && dates.size() > 0) {
-            String dateString = Joiner.on(" ").join(dates);
-            context.externalValue(dateString);
-            dateMapper.parse(context);
+            for (String date : dates) {
+                context.externalValue(date);
+                dateMapper.parse(context);
+            }
         }
 
         Set<String> locations = namedEntities.get("location");
         if (locations != null && locations.size() > 0) {
-            String locationString = Joiner.on(" ").join(locations);
-            context.externalValue(locationString);
-            locationMapper.parse(context);
+            for (String location : locations) {
+                context.externalValue(location);
+                locationMapper.parse(context);
+            }
         }
     }
 

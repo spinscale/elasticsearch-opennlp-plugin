@@ -30,6 +30,8 @@ import org.elasticsearch.common.RandomStringGenerator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.node.Node;
+import org.elasticsearch.search.facet.terms.TermsFacet;
+import org.elasticsearch.search.facet.terms.TermsFacetBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -98,9 +100,28 @@ public class OpenNlpPluginIntegrationTest {
         SearchResponse searchResponse = query(QueryBuilders.prefixQuery("someFieldAnalyzed.name", "Jack"));
         assertThat(searchResponse.hits().totalHits(), is(1L));
 
-        searchResponse = query(QueryBuilders.matchQuery("someFieldAnalyzed.name", "Jack Nicholson Kobe Bryant"));
+        searchResponse = query(QueryBuilders.matchQuery("someFieldAnalyzed.name", "Jack Nicholson"));
         assertThat(searchResponse.hits().totalHits(), is(1L));
         assertThat(searchResponse.hits().getAt(0).id(), is(indexResponse.id()));
+    }
+
+    @Test
+    public void testThatFacetingIsWorking() throws Exception {
+        putMapping("/test-mapping-analyzers.json");
+
+        String sampleText = copyToStringFromClasspath("/sample-text.txt");
+        IndexResponse indexResponse = indexElement(sampleText);
+
+        SearchResponse searchResponse = new SearchRequestBuilder(node.client()).setIndices(index).setTypes(type)
+                .setQuery(QueryBuilders.matchAllQuery())
+                .addFacet(new TermsFacetBuilder("names").field("someFieldAnalyzed.name").order(TermsFacet.ComparatorType.TERM))
+                .execute().actionGet();
+        assertThat(searchResponse.hits().totalHits(), is(1L));
+        assertThat(searchResponse.hits().getAt(0).id(), is(indexResponse.id()));
+        TermsFacet termsFacet = searchResponse.facets().facet(TermsFacet.class, "names");
+        assertThat(termsFacet.totalCount(), is(2L));
+        assertThat(termsFacet.entries().get(0).term(), is("Jack Nicholson"));
+        assertThat(termsFacet.entries().get(1).term(), is("Kobe Bryant"));
     }
 
     private SearchResponse query(QueryBuilder queryBuilder) {

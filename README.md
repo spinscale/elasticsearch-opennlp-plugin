@@ -55,6 +55,15 @@ curl -X POST http://localhost:9200/articles/article/_search -d '
 { "query" : { "term" : { "content.date" : "sunday" } } }'
 ```
 
+Facetting is supported as well
+
+```
+curl -X PUT localhost:9200/articles
+curl -v http://localhost:9200/articles/article/_mapping -d '{ "article" : { "properties" : { "content" : { "type" : "opennlp", "location_analyzer" : "keyword" } } } }'
+curl -X PUT http://localhost:9200/articles/article/2 -d '{ "content" : "My next travel destination is going to be in Amsterdam. I will be going to Schiphol Airport next Sunday." }'
+curl -X POST http://localhost:9200/articles/article/_search -d '{ "query" : { "match_all" : {} }, "facets" : { "location" : { "terms" : { "field" : "content.location" }} }, "size" : 0 }'
+
+```
 
 
 ## Downloading the models
