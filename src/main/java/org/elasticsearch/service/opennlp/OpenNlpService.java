@@ -18,6 +18,7 @@
 package org.elasticsearch.service.opennlp;
 
 import opennlp.tools.namefind.NameFinderME;
+import opennlp.tools.namefind.TokenNameFinderModel;
 import opennlp.tools.tokenize.SimpleTokenizer;
 import opennlp.tools.util.Span;
 import org.elasticsearch.ElasticSearchException;
@@ -40,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 
 public class OpenNlpService extends AbstractLifecycleComponent<OpenNlpService> {
 
-    private static Map<String, NameFinderME> finders = Maps.newHashMap();
+    private static Map<String, TokenNameFinderModel> finders = Maps.newHashMap();
 
     @Inject public OpenNlpService(Settings settings) {
         super(settings);
@@ -93,9 +94,9 @@ public class OpenNlpService extends AbstractLifecycleComponent<OpenNlpService> {
 
             StopWatch sw = new StopWatch("Loading model " + filePath).start();
             try {
-                finders.put(type, new NameFinderME(
+                finders.put(type, 
                         new PooledTokenNameFinderModel(
-                                new FileInputStream(modelFile))));
+                                new FileInputStream(modelFile)));
             } catch (IOException e) {
                 logger.error("Error loading model file {}: {}", e, modelFile, e.getMessage());
             } finally {
@@ -111,9 +112,9 @@ public class OpenNlpService extends AbstractLifecycleComponent<OpenNlpService> {
 
         List<TextAnnotation> allTextAnnotations = new ArrayList<TextAnnotation>();
         String[] tokens = SimpleTokenizer.INSTANCE.tokenize(content);
-        for (Map.Entry<String, NameFinderME> finderEntry : finders.entrySet()) {
+        for (Map.Entry<String, TokenNameFinderModel> finderEntry : finders.entrySet()) {
             String type = finderEntry.getKey();
-            NameFinderME finder = finderEntry.getValue();
+            NameFinderME finder = new NameFinderME(finderEntry.getValue());
 
             Span[] spans = finder.find(tokens);
             double[] probs = finder.probs(spans);
