@@ -21,12 +21,9 @@ import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequestBuilder;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
-import org.elasticsearch.action.get.GetRequestBuilder;
-import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.common.RandomStringGenerator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.node.Node;
@@ -37,6 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import static org.elasticsearch.common.io.Streams.copyToStringFromClasspath;
 import static org.elasticsearch.module.opennlp.test.NodeTestHelper.createNode;
@@ -46,8 +44,8 @@ import static org.hamcrest.Matchers.notNullValue;
 
 public class OpenNlpPluginIntegrationTest {
 
-    private String clusterName = RandomStringGenerator.randomAlphabetic(10);
-    private String index = RandomStringGenerator.randomAlphabetic(6).toLowerCase();
+    private String clusterName = UUID.randomUUID().toString().substring(0, 8).toLowerCase();
+    private String index = UUID.randomUUID().toString().substring(0, 8).toLowerCase();
     private String type = "someType"; // as defined in the sample mapping files
     private Node node;
 
