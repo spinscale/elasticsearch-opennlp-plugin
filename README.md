@@ -1,6 +1,6 @@
 # Elasticsearch OpenNLP Plugin
 
-This plugin uses the opennlp project to extract named entities from an indexed field. This means, when a certain field of a document is indexed, you can extract entities like persons, dates and locations from it automaticall and store them in additional fields.
+This plugin uses the opennlp project to extract named entities from an indexed field. This means, when a certain field of a document is indexed, you can extract entities like persons, dates and locations from it automatically and store them in additional fields.
 
 Add the configuration
 
