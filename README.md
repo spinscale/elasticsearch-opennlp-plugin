@@ -1,5 +1,13 @@
 # Elasticsearch OpenNLP Plugin
 
+**DO NOT USE THIS ANYMORE, IT IS DEPRECATED AND A BAD DESIGN IDEA**
+
+* This PoC was against a really 0.90 version of Elasticsearch, porting it to newer version would need some significant amount of work
+* NLP enrichment in general is clearly a preprocessing step, that should not be done in Elasticsearch itself. First, the NLP model needs to be loaded in all nodes, requiring you a significant amount of heap to dedicate to NLP instead of Elasticsearch, destabilizing Elasticsearch
+* Upgrading your model requires a restart of all of the Elasticsearch nodes, resulting in unwanted downtime.
+* Workaround 1: You could have your own service in front of Elasticsearch that is doing NLP enrichments before sending the document to Elasticsearch. This one is decoupled and can be updated anytime, and even scaled up and down independently.
+* Workaround 2: Check out the work which is currently (early 2016) being done in the [ingest branch](https://github.com/elastic/elasticsearch/tree/feature/ingest) in Elasticsearch  - that is a mechanism allowing you to change a document before indexing, and this is, where it makes sense to port this NLP plugin to in the future. Also check out the [github issues](https://github.com/elastic/elasticsearch/labels/%3AIngest) around  this topic.
+
 This plugin uses the opennlp project to extract named entities from an indexed field. This means, when a certain field of a document is indexed, you can extract entities like persons, dates and locations from it automatically and store them in additional fields.
 
 Add the configuration
