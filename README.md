@@ -8,6 +8,8 @@
 * Workaround 1: You could have your own service in front of Elasticsearch that is doing NLP enrichments before sending the document to Elasticsearch. This one is decoupled and can be updated anytime, and even scaled up and down independently.
 * Workaround 2: Check out the work which is currently (early 2016) being done in the [ingest branch](https://github.com/elastic/elasticsearch/tree/feature/ingest) in Elasticsearch  - that is a mechanism allowing you to change a document before indexing, and this is, where it makes sense to port this NLP plugin to in the future. Also check out the [github issues](https://github.com/elastic/elasticsearch/labels/%3AIngest) around  this topic.
 
+If you are searching for an update on this, you might want to check out the [elasticsearch ingest opennlp processor](https://github.com/spinscale/elasticsearch-ingest-opennlp) for Elasticsearch 5.0 and above
+
 This plugin uses the opennlp project to extract named entities from an indexed field. This means, when a certain field of a document is indexed, you can extract entities like persons, dates and locations from it automatically and store them in additional fields.
 
 Add the configuration
